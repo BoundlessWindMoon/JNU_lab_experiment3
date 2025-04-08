@@ -23,18 +23,14 @@ $(BUILD_DIR)/%.cu.o:%.cu
 	$(CC) -c -w $< $(CXXFLAGS) $(INCLUDES) -o $@
 	
 .PHONY: clean test prof clean-all 
-LOG_DIR := ./log
 TEST := test.sh
 COMMIT := commit.sh
-TIMESTAMP := $(shell date '+%Y-%m-%d_%H-%M-%S')
 
 commit:
-	mkdir -p $(LOG_DIR)
-	sh $(COMMIT) -o $(LOG_DIR)/$(TIMESTAMP) 
+	sh $(COMMIT) 
 
 test:
-	mkdir -p $(LOG_DIR)
-	sh $(TEST) -o $(LOG_DIR)/$(TIMESTAMP) 	
+	sh $(TEST) 
 
 clean:
 	rm -rf $(BUILD_DIR) 

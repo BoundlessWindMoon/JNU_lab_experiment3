@@ -51,18 +51,15 @@ void print_log(problem_t *problem) {
     printf("n=%d\tc=%d\th=%d\tw=%d\nk=%d\tr=%d\ts=%d\nu=%d\tv=%d\tp=%d\tq=%d\n", n, c, h, w, k, r, s, u, v, p, q);
 }
 
-void no_mma_init(mykernelParamType * param) {
-    UNROLL_PARAM(param);
-    float *data_col_device, *output_gemm_device, *pWeight_trans;
-    cudaMalloc((void **)&data_col_device, n * c * r * s * outh * outw * sizeof(float));
-    cudaMalloc((void **)&output_gemm_device, n * k * outh * outw * sizeof(float));
-    param->data_col_device = data_col_device;
-    param->output_gemm_device = output_gemm_device;
+void impl_gemm_init(mykernelParamType * param) {
 }
 
 void impl_gemm_run(mykernelParamType * param) {
     UNROLL_PARAM(param);
     launch_implicit_gemm(outh, outw, k, n, param);
+}
+
+void impl_gemm_exit(mykernelParamType * param) {
 }
 
 void impl_gemm_v0_run(mykernelParamType * param) {
@@ -76,12 +73,6 @@ void impl_gemm_v1_run(mykernelParamType * param) {
 void impl_gemm_v2_run(mykernelParamType * param) {
     UNROLL_PARAM(param);
     launch_implicit_gemm_v2(outh, outw, k, n, param);
-}
-
-
-void no_mma_exit(mykernelParamType * param) {
-    cudaFree(param->data_col_device);
-    cudaFree(param->output_gemm_device);
 }
 
 void umimplement_init(mykernelParamType* param) {
@@ -100,19 +91,19 @@ void umimplement_exit(mykernelParamType* param) {
 }
 
 convPlanType conv_plans[13] = {
-    {"preliminary_1", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"preliminary_2", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"preliminary_3", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"preliminary_4", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"preliminary_5", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"preliminary_6", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"final_1", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"final_2", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"final_3", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"final_4", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"final_5", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"final_6", no_mma_init, impl_gemm_v2_run, no_mma_exit},
-    {"umimplement", no_mma_init, impl_gemm_v2_run, no_mma_exit},
+    {"preliminary_1", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"preliminary_2", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"preliminary_3", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"preliminary_4", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"preliminary_5", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"preliminary_6", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"final_1", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"final_2", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"final_3", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"final_4", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"final_5", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"final_6", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"umimplement", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
 };
 
 convPlanType scheduler(problem_t *problem, mykernelParamType * param) {

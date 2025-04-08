@@ -53,7 +53,6 @@ int main(int argc, char **argv)
 
     problem_t problem;
     int paramSize;
-    kernelInfo_t kernelInfo;
 
     problem.in = pIn_device;
     problem.out = pOut_device;
@@ -76,7 +75,7 @@ int main(int argc, char **argv)
     printf("\nparamsize:%d\n", paramSize);
     void *param = malloc(paramSize);
 
-    getkernelInfo(&problem, &kernelInfo, param);
+    getkernelInfo(&problem, param);
     convPlanType current_plan = scheduler(&problem, (mykernelParamType *)param);
 
     current_plan.conv_init((mykernelParamType *)param);

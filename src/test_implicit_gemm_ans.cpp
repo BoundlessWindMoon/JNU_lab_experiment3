@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <math.h>
-#include <stdbool.h>  // 添加bool头文件
+#include <stdbool.h>  
 
 typedef struct mykernelParamType {
     float*         pin;        // 输入数据地址
@@ -28,10 +28,9 @@ typedef struct mykernelParamType {
 
 void conv_implicit_unimplement(mykernelParamType param)
 { 
-    // 框架代码无需修改
     int M = param.k;
     int N = param.n * param.Oh * param.Ow;
-    int K = param.c * param.r * param.s;  // 修正拼写错误 prarm->param
+    int K = param.c * param.r * param.s;  
     for(int i = 0; i < M; i++) {
         for(int j = 0; j < N; j++) {
             float sum = 0.0;
@@ -58,11 +57,10 @@ void conv_implicit(mykernelParamType param) {
             ow = j % param.Ow;
             float sum = 0.0f;
 
-            /* NKOHOW 布局输出地址 */
-            output_addr = n * param.k * param.Oh * param.Ow  // N维度步长
-                        + k * param.Oh * param.Ow            // K维度步长
-                        + oh * param.Ow                      // H维度步长
-                        + ow;                                // W维度步长
+            output_addr = n * param.k * param.Oh * param.Ow  
+                        + k * param.Oh * param.Ow            
+                        + oh * param.Ow                      
+                        + ow;                                
 
             for (int kk = 0; kk < K; kk++) { 
                 c = kk / (param.r * param.s);
@@ -122,7 +120,6 @@ void conv_direct(mykernelParamType param) {
                         }
                     }
                     
-                    /* NKOHOW 布局输出地址 */
                     size_t out_idx = n * param.k * param.Oh * param.Ow 
                                    + k * param.Oh * param.Ow 
                                    + oh * param.Ow 
@@ -134,8 +131,6 @@ void conv_direct(mykernelParamType param) {
     }
 }
 
-
-// 结果比较函数
 bool compare_output(float* out1, float* out2, size_t size, float epsilon = 1e-4) {
     for (size_t i = 0; i < size; ++i) {
         if (fabs(out1[i] - out2[i]) > epsilon) {
@@ -146,9 +141,8 @@ bool compare_output(float* out1, float* out2, size_t size, float epsilon = 1e-4)
     return true;
 }
 
-// 测试用例
+
 int main() {
-    // 参数配置（示例）
     mykernelParamType param = {
         .n = 1,         // batch=1
         .c = 3,         // 输入通道=3
@@ -165,38 +159,30 @@ int main() {
         .Ow = 32        // 输出宽度=32
     };
 
-    // 计算数据尺寸
     size_t input_size = param.n * param.c * param.h * param.w;
     size_t weight_size = param.k * param.c * param.r * param.s;
     size_t output_size = param.n * param.k * param.Oh * param.Ow;
 
-    // 分配内存
     float* input = (float*)malloc(input_size * sizeof(float));
     float* weight = (float*)malloc(weight_size * sizeof(float));
     float* output_implicit = (float*)malloc(output_size * sizeof(float));
     float* output_direct = (float*)malloc(output_size * sizeof(float));
 
-    // 初始化数据（随机值）
     for (size_t i = 0; i < input_size; ++i) input[i] = (float)rand() / RAND_MAX;
     for (size_t i = 0; i < weight_size; ++i) weight[i] = (float)rand() / RAND_MAX;
 
-    // 设置参数指针
     param.pin = input;
     param.pweight = weight;
 
-    // 执行隐式卷积
     param.pout = output_implicit;
     conv_implicit(param);
 
-    // 执行直接卷积
     param.pout = output_direct;
     conv_direct(param);
 
-    // 结果比较
     bool is_match = compare_output(output_implicit, output_direct, output_size);
     printf("Results match: %s\n", is_match ? "Yes" : "No");
 
-    // 清理内存
     free(input);
     free(weight);
     free(output_implicit);

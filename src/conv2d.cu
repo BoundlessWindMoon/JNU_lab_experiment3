@@ -10,7 +10,7 @@ int getParamsize(__in__ problem_t *problem, __out__ int *paramSize)
 }
 
 /*选手需要返回自己优化的kernel的grid信息与kernel函数的指针*/
-int getkernelInfo(__in__ problem_t *problem, __out__ kernelInfo_t *kernelInfo, __in_out__ void *param)
+int getkernelInfo(__in__ problem_t *problem, __in_out__ void *param)
 {
 
     mykernelParamType *pArgs = (mykernelParamType *)param;
