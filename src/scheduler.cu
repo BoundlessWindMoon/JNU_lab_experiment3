@@ -4,19 +4,12 @@
 #include <assert.h>
 #include <stdio.h>
 
-convParamType preliminary_1 = {64, 256, 14, 14, 256, 3, 3, 1, 1, 1, 1};
-convParamType preliminary_2 = {256, 192, 14, 14, 192, 3, 3, 1, 1, 1, 1};
-convParamType preliminary_3 = {16, 256, 26, 26, 512, 3, 3, 1, 1, 1, 1};
-convParamType preliminary_4 = {32, 256, 14, 14, 256, 3, 3, 1, 1, 1, 1};
-convParamType preliminary_5 = {2, 1280, 16, 16, 1280, 3, 3, 1, 1, 1, 1};
-convParamType preliminary_6 = {2, 960, 64, 64, 32, 3, 3, 1, 1, 1, 1};
-
-convParamType final_1= {16, 128, 64, 64, 27, 3, 3, 1, 1, 1, 1};
-convParamType final_2= {16, 256, 32, 32, 256, 3, 3, 1, 1, 1, 1};
-convParamType final_3= {16, 64, 128, 128, 64, 3, 3, 1, 1, 1, 1};
-convParamType final_4= {2, 1920, 32, 32, 640, 3, 3, 1, 1, 1, 1};
-convParamType final_5= {2, 640, 64, 64, 640, 3, 3, 1, 1, 1, 1};
-convParamType final_6= {2, 320, 64, 64, 4, 3, 3, 1, 1, 1, 1};
+convParamType testcase_1 = {64, 256, 14, 14, 256, 3, 3, 1, 1, 1, 1};
+convParamType testcase_2 = {256, 192, 14, 14, 192, 3, 3, 1, 1, 1, 1};
+convParamType testcase_3 = {16, 256, 26, 26, 512, 3, 3, 1, 1, 1, 1};
+convParamType testcase_4 = {32, 256, 14, 14, 256, 3, 3, 1, 1, 1, 1};
+convParamType testcase_5 = {2, 1280, 16, 16, 1280, 3, 3, 1, 1, 1, 1};
+convParamType testcase_6 = {2, 960, 64, 64, 32, 3, 3, 1, 1, 1, 1};
 
 #define UNROLL_PARAM(param) unsigned int n = param->n; \
                             unsigned int c = param->c; \
@@ -90,60 +83,31 @@ void umimplement_exit(mykernelParamType* param) {
     assert(0);
 }
 
-convPlanType conv_plans[13] = {
-    {"preliminary_1", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"preliminary_2", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"preliminary_3", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"preliminary_4", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"preliminary_5", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"preliminary_6", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"final_1", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"final_2", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"final_3", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"final_4", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"final_5", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
-    {"final_6", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+convPlanType conv_plans[7] = {
+    {"testcase_1", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"testcase_2", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"testcase_3", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"testcase_4", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"testcase_5", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
+    {"testcase_6", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
     {"umimplement", impl_gemm_init, impl_gemm_v0_run, impl_gemm_exit},
 };
 
 convPlanType scheduler(problem_t *problem, mykernelParamType * param) {
     print_log(problem);
     convParamType in_param = {problem->n, problem->c, problem->h, problem->w, problem->k, problem->r, problem->s, problem->u, problem->v, problem->p, problem->q};
-    if (PARAM_EQUAL(preliminary_1, in_param)) {
+    if (PARAM_EQUAL(testcase_1, in_param)) {
         return conv_plans[0];
-    }
-    if (PARAM_EQUAL(preliminary_2, in_param)) {
+    } else if (PARAM_EQUAL(testcase_2, in_param)) {
         return conv_plans[1];
-    }
-    if (PARAM_EQUAL(preliminary_3, in_param)) {
+    } else if (PARAM_EQUAL(testcase_3, in_param)) {
         return conv_plans[2];
-    }
-    if (PARAM_EQUAL(preliminary_4, in_param)) {
+    } else if (PARAM_EQUAL(testcase_4, in_param)) {
         return conv_plans[3];
-    }
-    if (PARAM_EQUAL(preliminary_5, in_param)) {
+    } else if (PARAM_EQUAL(testcase_5, in_param)) {
         return conv_plans[4];
-    }
-    if (PARAM_EQUAL(preliminary_6, in_param)) {
+    } else if (PARAM_EQUAL(testcase_6, in_param)) {
         return conv_plans[5];
-    }
-    if (PARAM_EQUAL(final_1, in_param)) {
+    } else 
         return conv_plans[6];
-    }
-    if (PARAM_EQUAL(final_2, in_param)) {
-        return conv_plans[7];
-    }
-    if (PARAM_EQUAL(final_3, in_param)) {
-        return conv_plans[8];
-    }
-    if (PARAM_EQUAL(final_4, in_param)) {
-        return conv_plans[9];
-    }
-    if (PARAM_EQUAL(final_5, in_param)) {
-        return conv_plans[10];
-    }
-    if (PARAM_EQUAL(final_6, in_param)) {
-        return conv_plans[11];
-    }
-    return conv_plans[12];
 }

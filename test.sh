@@ -10,23 +10,16 @@
 
 make clean
 make -j TEST=y 2>&1 | grep 'error'
-preliminary_1="64 256 14 14 256 3 3 1 1 1 1"
-preliminary_2="256 192 14 14 192 3 3 1 1 1 1"
-preliminary_3="16 256 26 26 512 3 3 1 1 1 1"
-preliminary_4="32 256 14 14 256 3 3 1 1 1 1"
-preliminary_5="2 1280 16 16 1280 3 3 1 1 1 1"
-preliminary_6="2 960 64 64 32 3 3 1 1 1 1"
+testcase_1="64 256 14 14 256 3 3 1 1 1 1"
+testcase_2="256 192 14 14 192 3 3 1 1 1 1"
+testcase_3="16 256 26 26 512 3 3 1 1 1 1"
+testcase_4="32 256 14 14 256 3 3 1 1 1 1"
+testcase_5="2 1280 16 16 1280 3 3 1 1 1 1"
+testcase_6="2 960 64 64 32 3 3 1 1 1 1"
 
-final_1="16 128 64 64 27 3 3 1 1 1 1"
-final_2="16 256 32 32 256 3 3 1 1 1 1"
-final_3="16 64 128 128 64 3 3 1 1 1 1"
-final_4="2 1920 32 32 640 3 3 1 1 1 1"
-final_5="2 640 64 64 640 3 3 1 1 1 1"
-final_6="2 320 64 64 4 3 3 1 1 1 1"
-
-./conv2dfp16demo $preliminary_1
-./conv2dfp16demo $preliminary_2
-./conv2dfp16demo $preliminary_3
-./conv2dfp16demo $preliminary_4
-./conv2dfp16demo $preliminary_5
-./conv2dfp16demo $preliminary_6
+./conv2dfp16demo $testcase_1
+./conv2dfp16demo $testcase_2
+./conv2dfp16demo $testcase_3
+./conv2dfp16demo $testcase_4
+./conv2dfp16demo $testcase_5
+./conv2dfp16demo $testcase_6

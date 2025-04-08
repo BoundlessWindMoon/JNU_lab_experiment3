@@ -8,26 +8,22 @@ extern "C" __global__ void implicit_gemm(mykernelParamType param)
     int bx = blockIdx.x;
     int by = blockIdx.y;
 
-    // warp tile, z字排布
     const uint32_t warp_id = threadIdx.x / 32;
     const uint32_t lane_id = threadIdx.x % 32;
     const uint32_t mma_tid_x = (lane_id / 2) % 8;
     const uint32_t mma_tid_y = (lane_id / 16) * 2 + (lane_id % 2);
 
-    // 每个线程需要负责一个 8 * 8 的矩阵， 实际上这里划分为 4个 4 * 4 的矩阵
     uint32_t input_lds_addr = (warp_id % 2) * (8 * 8) + mma_tid_x * 4 ;
     uint32_t weight_lds_addr = (warp_id / 2) * (8 * 4) + mma_tid_y * 4;
     int y = weight_lds_addr + by * 128;
     int x = input_lds_addr + bx * 128;
 
-    // share memory buffer, 每个线程需要负责加载 4 * 2 数据
-    __shared__ float shm_weight[2][8 * 132];    // 列主序 shm_weight[4][32][8]
-    __shared__ float shm_input[2][128 * 8];   // 行主序 shm_input[8][4][32]
+    __shared__ float shm_weight[2][8 * 132];   
+    __shared__ float shm_input[2][128 * 8];   
 
-    uint32_t weight_sts_addr = (tx % 8) * 132 + (tx / 8) * 4 ;  // shm_weight[:4][tx / 8][tx % 8]
-    uint32_t input_sts_addr = (tx / 32) * 128 + (tx % 32);  // shm_input[tx / 32][：4][tx % 32]
+    uint32_t weight_sts_addr = (tx % 8) * 132 + (tx / 8) * 4 ;  
+    uint32_t input_sts_addr = (tx / 32) * 128 + (tx % 32);  
     
-    // 当前线程加载的数据点在输入矩阵 Oh 和 Ow 上的坐标, 注意和上面的矩阵的对应关系
     int pos_ori_h[4];
     int pos_ori_w[4];
     # pragma unroll
@@ -36,7 +32,6 @@ extern "C" __global__ void implicit_gemm(mykernelParamType param)
         pos_ori_w[i] = ((bx * 128 + tx % 32 + i * 32) % param.Ow) * param.v - param.q;
     }
 
-    // 计算对应加载数据所在矩阵的偏移
     int z = blockIdx.z;
     int input_offset = z * param.h * param.w * param.c;
     int weight_offset = (by * 128 + tx / 8 * 4) * param.c * param.r * param.s;
@@ -44,16 +39,11 @@ extern "C" __global__ void implicit_gemm(mykernelParamType param)
     int weight_channel_size = param.r * param.s;
     int kernel_size = param.c * weight_channel_size;
 
-
-    // 初始化 输出矩阵 , 中间矩阵
     int write_flag = 1;
     float weight_temp[2][8];
     float input_temp[2][8];
     float output_temp[8][8];
  
-    // float weight_temp[8];
-    // float input_temp[8];
-    // float output_temp[8][8];
     #pragma unroll
     for (int i = 0; i < 8; i++) {
     #pragma unroll
@@ -76,7 +66,6 @@ extern "C" __global__ void implicit_gemm(mykernelParamType param)
         else {
             weight_ldg_reg[i] = 0.0;
         }   
-        // weight_ldg_reg[i] = param.pweight[weight_offset + weight_offset_tmp + i * kernel_size]; // 不清楚为什么不判断越界也可以
     }
 
     int cur_c = (crs + tx / 32) / weight_channel_size;
