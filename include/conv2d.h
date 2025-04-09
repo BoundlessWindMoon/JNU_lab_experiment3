@@ -6,6 +6,7 @@
 #define __in__
 #define __out__
 #define __in_out__
+#define PLACEHOLDER 0
 
 #define OFFSET(row, col, ld) ((row) * (ld) + (col))
 #define FLOAT4(pointer) (reinterpret_cast<float4*>(&(pointer))[0])
@@ -102,7 +103,7 @@ int getParamsize(__in__ problem_t* problem, __out__ int* paramSize);
 int getkernelInfo(__in__ problem_t* problem, __in_out__ void* param);
                    
 extern "C" __global__ void directConvolution(mykernelParamType param) __attribute__((amdgpu_flat_work_group_size(1,256)));
-void launch_implicit_gemm(unsigned int outh, unsigned int outw, unsigned int k, unsigned int n, mykernelParamType* param);  
+// void launch_implicit_gemm(unsigned int outh, unsigned int outw, unsigned int k, unsigned int n, mykernelParamType* param);  
 void launch_implicit_gemm_v0(unsigned int outh, unsigned int outw, unsigned int k, unsigned int n, mykernelParamType* param);
 void launch_implicit_gemm_v1(unsigned int outh, unsigned int outw, unsigned int k, unsigned int n, mykernelParamType* param);
 void launch_implicit_gemm_v2(unsigned int outh, unsigned int outw, unsigned int k, unsigned int n, mykernelParamType* param);

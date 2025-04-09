@@ -47,11 +47,6 @@ void print_log(problem_t *problem) {
 void impl_gemm_init(mykernelParamType * param) {
 }
 
-void impl_gemm_run(mykernelParamType * param) {
-    UNROLL_PARAM(param);
-    launch_implicit_gemm(outh, outw, k, n, param);
-}
-
 void impl_gemm_exit(mykernelParamType * param) {
 }
 

@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include <stdbool.h>  
+#define PLACEHOLDER 0
 
 typedef struct mykernelParamType {
     float*         pin;        // 输入数据地址
@@ -50,36 +51,26 @@ void conv_implicit(mykernelParamType param) {
     int input_addr, weight_addr, output_addr;
 
     for (int i = 0; i < M; i++) {
-        k = i; 
+        k = PLACEHOLDER; 
         for (int j = 0; j < N; j++) {
-            n = j / (param.Oh * param.Ow);
-            oh = (j % (param.Oh * param.Ow)) / param.Ow;
-            ow = j % param.Ow;
+            n = PLACEHOLDER;
+            oh = PLACEHOLDER;
+            ow = PLACEHOLDER;
             float sum = 0.0f;
 
-            output_addr = n * param.k * param.Oh * param.Ow  
-                        + k * param.Oh * param.Ow            
-                        + oh * param.Ow                      
-                        + ow;                                
+            output_addr = PLACEHOLDER;                                
 
             for (int kk = 0; kk < K; kk++) { 
-                c = kk / (param.r * param.s);
-                r = (kk % (param.r * param.s)) / param.s;
-                s = (kk % (param.r * param.s)) % param.s;
+                c = PLACEHOLDER;
+                r = PLACEHOLDER;
+                s = PLACEHOLDER;
 
-                int ih = oh * param.u - param.p + r;
-                int iw = ow * param.v - param.q + s;
+                int ih = PLACEHOLDER;
+                int iw = PLACEHOLDER;
 
                 if (ih >= 0 && ih < param.h && iw >= 0 && iw < param.w) {
-                    input_addr = n * param.c * param.h * param.w 
-                               + c * param.h * param.w 
-                               + ih * param.w 
-                               + iw;
-                    
-                    weight_addr = k * param.c * param.r * param.s 
-                                + c * param.r * param.s 
-                                + r * param.s 
-                                + s;
+                    input_addr = PLACEHOLDER;
+                    weight_addr = PLACEHOLDER;
 
                     sum += param.pin[input_addr] * param.pweight[weight_addr];
                 }

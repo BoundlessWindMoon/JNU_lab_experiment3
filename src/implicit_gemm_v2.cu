@@ -14,34 +14,37 @@ extern "C" __global__ void implicit_gemm_v2(mykernelParamType param)
     __shared__ float sh_input[16][16];
     __shared__ float sh_weight[16][16];
 
-    const int oh = ohow / param.Ow;
-    const int ow = ohow % param.Ow;
+    const int oh = PLACEHOLDER;
+    const int ow = PLACEHOLDER;
     
-    const int ih_start = oh*param.u - param.p;
-    const int iw_start = ow*param.v - param.q;
+    const int ih_start = PLACEHOLDER;
+    const int iw_start = PLACEHOLDER;
 
     float sum = 0.0f;
 
-    const int n_offset = n * param.c * param.h * param.w;
-    const int k_offset = k * param.c * param.r * param.s;
-
+    const int input_offset = n * param.c * param.h * param.w;
+    const int kernel_offset = k * param.c * param.r * param.s;
     const int crs_total = param.c * param.r * param.s;
 
     for(int base=0; base<crs_total; base+=16){
         int crs_idx = base + tx;
-        sh_weight[ty][tx] = (crs_idx < crs_total) ? 
-                          param.pweight[k_offset + crs_idx] : 0.0f;
+        if(crs_idx < crs_total)
+            sh_weight[ty][tx] = PLACEHOLDER;
+        else 
+            sh_weight[ty][tx] = 0.0f;
+        // sh_weight[ty][tx] = (crs_idx < crs_total) ? 
+        //                   param.pweight[kernel_offset + crs_idx] : 0.0f;
 
-        const int c = (base + ty) / (param.r*param.s);
-        const int r = (base + ty) % (param.r*param.s) / param.s;
-        const int s = (base + ty) % (param.r*param.s) % param.s;
+        const int c = PLACEHOLDER;
+        const int r = PLACEHOLDER;
+        const int s = PLACEHOLDER;
         
-        const int ih = ih_start + r;
-        const int iw = iw_start + s;
+        const int ih = PLACEHOLDER;
+        const int iw = PLACEHOLDER;
 
         if(ih>=0 && iw>=0 && ih<param.h && iw<param.w){
             const int i_addr = c*param.h*param.w + ih*param.w + iw;
-            sh_input[ty][tx] = param.pin[n_offset + i_addr];
+            sh_input[ty][tx] = PLACEHOLDER;
         } else {
             sh_input[ty][tx] = 0.0f;
         }
@@ -58,8 +61,7 @@ extern "C" __global__ void implicit_gemm_v2(mykernelParamType param)
 
     /**** 结果写入 ****/
     if(ohow < param.Oh*param.Ow && k < param.k){
-        const int o_addr = n*param.k*param.Oh*param.Ow + 
-                         k*param.Oh*param.Ow + ohow;
+        const int o_addr = PLACEHOLDER;
         param.pout[o_addr] = sum;
     }
 }
