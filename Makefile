@@ -1,4 +1,4 @@
-EXECUTABLE=conv2dfp16demo
+EXECUTABLE=conv2d
 BUILD_DIR := ./build
 SRC_DIRS := src
 
