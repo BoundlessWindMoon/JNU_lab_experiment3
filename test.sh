@@ -17,9 +17,9 @@ testcase_4="32 256 14 14 256 3 3 1 1 1 1"
 testcase_5="2 1280 16 16 1280 3 3 1 1 1 1"
 testcase_6="2 960 64 64 32 3 3 1 1 1 1"
 
-./conv2dfp16demo $testcase_1
-./conv2dfp16demo $testcase_2
-./conv2dfp16demo $testcase_3
-./conv2dfp16demo $testcase_4
-./conv2dfp16demo $testcase_5
-./conv2dfp16demo $testcase_6
+./conv2d $testcase_1
+./conv2d $testcase_2
+./conv2d $testcase_3
+./conv2d $testcase_4
+./conv2d $testcase_5
+./conv2d $testcase_6
